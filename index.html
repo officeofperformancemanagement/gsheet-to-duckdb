@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body {
+                max-width: 900px;
+                padding: 30px;
+                text-align: left;
+            }
+            #url {
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <h1>Google Sheets to DuckDB</h1>
+            <h2>Query your Google Sheet with SQL</h2>
+            <label for="url">URL</label>
+            <input type="text" id="url">
+        </div>
+        <script>
+            document.getElementById("url").addEventListener("change", function (event) {
+                console.log("event:", event);
+                let url = document.getElementById("url").value;
+                console.log("url:", url);
+
+                const obj = new URL(url);
+
+                const pathname = obj.pathname.replace("/edit", "").replace("/view", "").replace("/export", "") + "/export";
+
+                obj.searchParams.set("format", "csv");
+
+                const export_url = obj.origin + pathname + "?" + obj.searchParams.toString() + obj.hash;
+
+                window.location = "https://shell.duckdb.org/#queries=v0,CREATE-TABLE-dataset-AS-SELECT-*-FROM-read_csv('" + encodeURIComponent(export_url) + "')~,DESCRIBE-dataset~";
+            });
+        </script>
+    </body>
+</html>
